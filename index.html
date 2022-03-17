@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>carrotGame</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://kit.fontawesome.com/6cca727381.js" crossorigin="anonymous"></script>
+    <script src="main.js"></script>
+</head>
+
+<body>
+
+    <!-- 게임 영역, 백그라운드 이미지 -->
+    <div class="gameArea">
+        <!-- 처음에는 정지 상태, 클릭하면 사라지고 모달창 등장해야함 게임 시작하면 음악 재생 -->
+        <div class="btnBox">
+            <button class="playBtn"><i class="fa-solid fa-play"></i></button>
+            <button class="stopBtn hide"><i class="fa-solid fa-stop"></i></button>
+        </div>
+        <!-- 게임 시작 버튼을 누름과 함께 타이머 시작 게임이 끝나거나 정지 버튼을 누르면 정지 -->
+        <div class="timer">1:00</div>
+        <!-- 당근이 줄어들면 카운터 감소 게임이 재시작하면 복귀 -->
+        <div class="carrotCounter">10</div>
+        <!-- 배경은 반투명, 재시작, 성공, 실패 3가지 메세지 준비할 것 -->
+        <div class="modal hide">
+            <button class="restartBtn"><i class="fa-solid fa-arrow-rotate-left"></i></button>
+            <p class="resultMessage">You Win!</p>
+        </div>
+        <div class="dropArea">
+            <!-- 의사난수 설정 -->
+            <!-- 클릭시 카운터 감소 카운터 0 되면 모달 -->
+            <button class="carrot"><img src="/img/carrot.png" alt="carrot"></button>
+            <button class="carrot"><img src="/img/carrot.png" alt="carrot"></button>
+            <button class="carrot"><img src="/img/carrot.png" alt="carrot"></button>
+            <button class="carrot"><img src="/img/carrot.png" alt="carrot"></button>
+            <button class="carrot"><img src="/img/carrot.png" alt="carrot"></button>
+            <button class="carrot"><img src="/img/carrot.png" alt="carrot"></button>
+            <button class="carrot"><img src="/img/carrot.png" alt="carrot"></button>
+            <button class="carrot"><img src="/img/carrot.png" alt="carrot"></button>
+            <button class="carrot"><img src="/img/carrot.png" alt="carrot"></button>
+            <button class="carrot"><img src="/img/carrot.png" alt="carrot"></button>
+            <!-- 클릭시 모달 띄우고 게임 중단 시간 정지 -->
+            <button class="bug"><img src="/img/bug.png" alt="bug"></button>
+            <button class="bug"><img src="/img/bug.png" alt="bug"></button>
+            <button class="bug"><img src="/img/bug.png" alt="bug"></button>
+            <button class="bug"><img src="/img/bug.png" alt="bug"></button>
+            <button class="bug"><img src="/img/bug.png" alt="bug"></button>
+            <button class="bug"><img src="/img/bug.png" alt="bug"></button>
+            <button class="bug"><img src="/img/bug.png" alt="bug"></button>
+            <button class="bug"><img src="/img/bug.png" alt="bug"></button>
+            <button class="bug"><img src="/img/bug.png" alt="bug"></button>
+            <button class="bug"><img src="/img/bug.png" alt="bug"></button>
+        </div>
+
+    </div>
+
+</body>
+
+</html>
