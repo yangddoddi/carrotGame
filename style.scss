@@ -20,7 +20,7 @@ body {
   background-color: black;
 }
 
-.gameArea {
+.gameContainer {
   position: relative;
 
   background-image: url(./img/background.png);
@@ -95,11 +95,15 @@ body {
   height: 150px;
   padding: 20px;
   border-radius: 15px;
+  z-index: 10;
 
   .restartBtn {
     background-color: lightsalmon;
     font-size: 34px;
+    height: 50px;
+    line-height: 50px;
     width: 50px;
+    cursor: pointer;
   }
 }
 
@@ -108,6 +112,7 @@ body {
   width: 80%;
   height: 250px;
   bottom: 100px;
+  z-index: 0;
 }
 
 .bug,
