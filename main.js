@@ -7,181 +7,180 @@ const modal = document.querySelector(".modal");
 const dropArea = document.querySelector(".dropArea");
 const resultMessage = document.querySelector(".resultMessage");
 
-// btn
 const btnBox = document.querySelector(".btnBox");
 const playBtn = document.querySelector(".playBtn");
 const stopBtn = document.querySelector(".stopBtn");
 const restartBtn = document.querySelector(".restartBtn");
 
-// sound
 const bgm = new Audio("./sound/bg.mp3");
-const gameOverSound = new Audio("./sound/alert.wav");
+const alertSound = new Audio("./sound/alert.wav");
 const bugSound = new Audio("./sound/bug_pull.mp3");
 const carrotSound = new Audio("./sound/carrot_pull.mp3");
+const winSound = new Audio("./sound/game_win.mp3");
 
-// target
-const bug = document.querySelectorAll(".bug");
-const carrot = document.querySelectorAll(".carrot");
+let targetCount = 15;
+let playTime = 15;
+let gameTimer;
+let started = true;
+let score = 0;
 
-// counter
+{
+  /* <button><img class="carrot hide" src="/img/carrot.png" alt="carrot"></button> */
+}
 
-let gameCounter;
-let timerCount = 1;
-let carrotCount = 0;
+btnBox.addEventListener("click", startGameBtn);
+dropArea.addEventListener("click", clickCarrotAndCarrot);
+modal.addEventListener("click", retry);
 
-// 게임 승패여부
-let isWin;
-let isLost;
-let isPause;
-
-// 게임 시작시 작동
-function StartGame() {
-  if (timerCount !== 1) {
-    return;
+function startGameBtn() {
+  if (started) {
+    startGame();
+    showStopBtn();
+    started = false;
+  } else {
+    toggleVisible(btnBox, "hidden");
+    timerCounterVisible("hidden");
+    playSounds(alertSound);
+    closeGame();
   }
-  isWin = false;
-  isLost = false;
-  isPause = false;
-  //   BGM 재생
-  bgm.play();
-  // 타겟 요소 무작위 생성(이동)
-  dropItems();
-  //   정지버튼 재생성
-  stopBtn.parentElement.parentElement.classList.remove("hide");
+}
 
-  let gameCounter = setInterval(() => {
-    timer.innerHTML = `0:${20 - timerCount}`;
-    timerCount++;
-    // 타이머가 다 지나면 게임 오버 함수 실행
-    if (timerCount == 21) {
-      isLost = true;
-      gameOver();
-      timerCount = 1;
-      clearInterval(gameCounter);
+function startGame() {
+  score = 0;
+  updateCarrotCounter();
+  init();
+  playSounds(bgm);
+  timerCounterVisible("visible");
+  startTimer(playTime);
+}
+
+function closeGame() {
+  pauseSounds(bgm);
+  stopTimer();
+  toggleModalDisplay("block");
+}
+
+function startTimer(time) {
+  updateTimerText(time);
+  gameTimer = setInterval(() => {
+    updateTimerText(time);
+    if (time <= 0) {
+      stopTimer();
+    } else if (started == true) {
+      stopTimer();
     }
-    if (isPause == true || isWin == true || isLost == true) {
-      clearInterval(gameCounter);
-      timerCount = 1;
-    }
+    updateTimerText(--time);
   }, 1000);
 }
 
-// 타겟 임의 위치로 이동
-function dropItems() {
-  const dropAreaCoordinate = dropArea.getBoundingClientRect();
-  let dropAreaLeft = Math.ceil(dropAreaCoordinate.left);
-  let dropAreaRight = Math.floor(dropAreaCoordinate.right);
-  let dropAreaTop = Math.ceil(dropAreaCoordinate.top);
-  let dropAreaBottom = Math.floor(dropAreaCoordinate.bottom);
-
-  bug.forEach((e) => {
-    let itemX =
-      Math.random() * (dropAreaRight - dropAreaLeft) +
-      dropAreaLeft -
-      dropAreaCoordinate.x;
-    let itemY =
-      Math.random() * (dropAreaBottom - dropAreaTop) +
-      dropAreaTop -
-      dropAreaCoordinate.y;
-    e.classList.remove("hide");
-    e.style.transform = `translate(${itemX}px,${itemY}px)`;
-  });
-
-  carrot.forEach((e) => {
-    let itemX =
-      Math.random() * (dropAreaRight - dropAreaLeft) +
-      dropAreaLeft -
-      dropAreaCoordinate.x;
-    let itemY =
-      Math.random() * (dropAreaBottom - dropAreaTop) +
-      dropAreaTop -
-      dropAreaCoordinate.y;
-    e.classList.remove("hide");
-    e.style.transform = `translate(${itemX}px,${itemY}px)`;
-  });
+function stopTimer() {
+  clearInterval(gameTimer);
 }
 
-// 게임 종료
-function gameOver() {
-  // 모달창 띄우기
-  if (isPause) {
-    resultMessage.innerText = "Retry ❔";
-  }
-  if (isLost) {
-    resultMessage.innerText = "You Lost 😈";
-  }
-  if (isWin) {
-    resultMessage.innerText = "You Win 😤";
-  }
-
-  timerCount = 0;
-  carrotCount = 0;
-  carrotCounter.innerText = 10;
-
-  modal.classList.remove("hide");
-  // 게임 종료 효과음
-  gameOverSound.play();
-  // 배경음악 정지
-  bgm.pause();
-  // 타겟 숨김처리
-  bug.forEach((e) => {
-    e.classList.add("hide");
-  });
-  carrot.forEach((e) => {
-    e.classList.add("hide");
-  });
+function updateTimerText(time) {
+  let minute = Math.floor(time / 60);
+  let second = time % 60;
+  timer.textContent = `${minute} : ${second}`;
 }
 
-// 버튼 클릭 이벤트 모음
-gameContainer.addEventListener("click", (event) => {
+function updateCarrotCounter() {
+  carrotCounter.innerText = `${targetCount - score}`;
+}
+
+function showStopBtn() {
+  const icon = document.querySelector(".fa-solid");
+
+  icon.classList.remove("fa-play");
+  icon.classList.add("fa-stop");
+}
+
+function timerCounterVisible(visible) {
+  timer.style.visibility = visible;
+  carrotCounter.style.visibility = visible;
+}
+
+function init() {
+  dropArea.innerHTML = " ";
+  addItem("carrot", targetCount, "./img/carrot.png");
+  addItem("bug", targetCount, "./img/bug.png");
+}
+
+function addItem(name, count, imgSrc) {
+  const dropAreaWidth = dropArea.getBoundingClientRect().width - 80;
+  const dropAreaHeight = dropArea.getBoundingClientRect().height - 80;
+
+  for (let i = 0; i < count; i++) {
+    const obj = document.createElement("img");
+    obj.className = name;
+    obj.src = imgSrc;
+
+    const x = placeRandom(0, dropAreaWidth);
+    const y = placeRandom(0, dropAreaHeight);
+    obj.style.top = `${y}px`;
+    obj.style.left = `${x}px`;
+
+    dropArea.append(obj);
+  }
+}
+
+function toggleVisible(name, visible) {
+  name.style.visibility = visible;
+}
+
+function toggleModalDisplay(display) {
+  modal.style.display = display;
+}
+
+function showResultModal(result) {
+  resultMessage.innerText = `${result}`;
+}
+
+function clickCarrotAndCarrot() {
   const Target = event.target;
 
-  if (
-    Target.tagName !== "BUTTON" &&
-    Target.parentElement.tagName !== "BUTTON"
-  ) {
+  if (Target.tagName !== "IMG") {
     return;
   }
-
-  if (Target == playBtn) {
-    playBtn.parentElement.classList.add("hide");
-    stopBtn.parentElement.classList.remove("hide");
-    StartGame();
-  }
-
-  //  정지 버튼
-  if (Target == stopBtn) {
-    stopBtn.parentElement.parentElement.classList.add("hide");
-    isPause = true;
-    gameOver();
-  }
-
-  //   재시작 버튼
-  if (Target.parentElement == restartBtn) {
-    console.log("rererestart");
-    StartGame();
-    gameCounter;
-    modal.classList.add("hide");
-  }
-
-  // 벌레 잡기
-  if (Target.className == "bug") {
-    console.log("bbuugg");
-    bugSound.play();
-    isLost = true;
-    gameOver();
-  }
-
-  // 당근 누르기
   if (Target.className == "carrot") {
-    console.log("carottttt");
-    carrotSound.play();
+    upScore();
+  } else {
+    playSounds(bugSound);
+    showResultModal("You Lost!");
+    closeGame();
+  }
+
+  function upScore() {
     Target.classList.add("hide");
-    carrotCount = carrotCount + 1;
-    carrotCounter.innerText = `${10 - carrotCount}`;
-    if (carrotCount == 10) {
-      isWin = true;
-      gameOver();
+    ++score;
+    playSounds(carrotSound);
+    updateCarrotCounter();
+
+    if (targetCount == score) {
+      showResultModal("You Win!");
+      playSounds(winSound);
+      closeGame();
     }
   }
-});
+}
+
+function retry() {
+  started == false;
+  showResultModal("Retry?");
+  toggleModalDisplay("none");
+  toggleVisible(btnBox, "visible");
+  stopTimer();
+  startGame();
+}
+
+function playSounds(sound) {
+  sound.cuurentTime = 0;
+  sound.play();
+}
+
+function pauseSounds(sound) {
+  sound.pause();
+}
+
+function placeRandom(min, max) {
+  return Math.random() * (max - min) + min;
+}
