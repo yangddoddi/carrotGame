@@ -1,6 +1,6 @@
 # carrot Game
 
-gif ⬇️
+gif ⬇️  
 ![carrot](https://user-images.githubusercontent.com/97802103/166094183-284143af-5bc1-4f9f-befd-3da504905dd6.gif)
 
 Demo : https://yangddoddi.github.io/carrotGame/
